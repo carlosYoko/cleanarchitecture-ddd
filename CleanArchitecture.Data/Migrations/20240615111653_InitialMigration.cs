@@ -29,8 +29,7 @@ namespace CleanArchitecture.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StramerId = table.Column<int>(type: "int", nullable: false),
-                    StreamerId = table.Column<int>(type: "int", nullable: true)
+                    StreamerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,7 +38,8 @@ namespace CleanArchitecture.Data.Migrations
                         name: "FK_Videos_Streamers_StreamerId",
                         column: x => x.StreamerId,
                         principalTable: "Streamers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
