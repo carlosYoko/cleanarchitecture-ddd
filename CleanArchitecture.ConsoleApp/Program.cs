@@ -4,10 +4,23 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
+//await QueryLinq();
 //await QueryMethods();
 //await QueryFilter();
 //QueryStreaming();
 //await AddNewRecords();
+
+async Task QueryLinq()
+{
+    var streamers = await (from i in dbContext.Streamers
+                           where EF.Functions.Like(i.Name, "%a%")
+                           select i).ToListAsync();
+
+    foreach (var streamer in streamers)
+    {
+        Console.WriteLine($"{streamer.Name} - {streamer.Url}");
+    }
+}
 
 async Task QueryMethods()
 {
