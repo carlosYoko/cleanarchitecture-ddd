@@ -3,22 +3,36 @@ using CleanArchitecture.Domain;
 
 StreamerDbContext dbContext = new();
 
-Streamer streamer = new()
+//await AddNewRecords();
+QueryStreaming();
+void QueryStreaming()
 {
-    Name = "Amazon Prime",
-    Url = "https://www.amazonprime.com"
+    var streamers = dbContext!.Streamers!.ToList();
+    foreach (var streamer in streamers)
+    {
+        Console.WriteLine($"Nombre: {streamer.Name} (Id: {streamer.Id})");
+    }
+}
+
+async Task AddNewRecords()
+{
+    Streamer streamer = new()
+    {
+        Name = "Disney",
+        Url = "https://www.disney.com"
+    };
+
+    dbContext!.Streamers!.Add(streamer);
+    await dbContext.SaveChangesAsync();
+
+    var movies = new List<Video>
+{
+    new Video { Name = "La cenicienta", StreamerId = streamer.Id },
+    new Video { Name = "101 Dalmatas", StreamerId = streamer.Id },
+    new Video { Name = "La bella y la bestia", StreamerId = streamer.Id },
+    new Video { Name = "Star Wars", StreamerId = streamer.Id },
 };
 
-dbContext!.Streamers!.Add(streamer);
-await dbContext.SaveChangesAsync();
-
-var movies = new List<Video>
-{
-    new Video { Name = "Mad Max", StreamerId = streamer.Id },
-    new Video { Name = "Batman", StreamerId = streamer.Id },
-    new Video { Name = "El club de la lucha", StreamerId = streamer.Id },
-    new Video { Name = "Citizen Kane", StreamerId = streamer.Id },
-};
-
-await dbContext!.AddRangeAsync(movies);
-await dbContext.SaveChangesAsync();
+    await dbContext!.AddRangeAsync(movies);
+    await dbContext.SaveChangesAsync();
+}
