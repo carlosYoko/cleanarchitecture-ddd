@@ -4,9 +4,30 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
-await QueryFilter();
+//await QueryMethods();
+//await QueryFilter();
 //QueryStreaming();
 //await AddNewRecords();
+
+async Task QueryMethods()
+{
+    // Si no existe el resultado de la condicion dispara una excepcion (detiene la ejecucion del programa)
+    var streamer1 = await dbContext.Streamers!.Where(s => s.Name.Contains("a")).FirstAsync();
+
+    // Si no existe el resultado de la condicion devuelve un valor por defecto en null (no detiene la ejecucion del programa)
+    var streamer2 = await dbContext.Streamers!.Where(s => s.Name.Contains("a")).FirstOrDefaultAsync();
+    // Misma consulta pero mas eficiente ya que combina el filtrado y la seleccion del primer elemento en una misma operacion.
+    var streamer3 = await dbContext.Streamers!.FirstOrDefaultAsync(s => s.Name.Contains("a"));
+
+    // Si el resultado de la condicion devuelve mas de 1 resultado o ninguno disparará un error.
+    var streamer4 = await dbContext.Streamers!.Where(s => s.Id == 1).SingleAsync();
+
+    // Lo mismo pero devuelve un valor por defecto en null si no encuentra resultado pero disparara un error si encuentra 2
+    var streamer5 = await dbContext.Streamers!.Where(s => s.Id == 1).SingleOrDefaultAsync();
+
+    // Query para buscar un registro por su ID
+    var streamer6 = await dbContext.Streamers!.FindAsync(1);
+}
 
 async Task QueryFilter()
 {
