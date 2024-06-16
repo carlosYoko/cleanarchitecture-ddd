@@ -4,11 +4,24 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
+//await TrackingAndNotTracking();
 //await QueryLinq();
 //await QueryMethods();
 //await QueryFilter();
 //QueryStreaming();
 //await AddNewRecords();
+
+async Task TrackingAndNotTracking()
+{
+    var stramer = await dbContext!.Streamers!.FirstOrDefaultAsync(x => x.Id == 1);
+    stramer!.Name = "Netflix Super";
+
+    var stramer2 = await dbContext!.Streamers!.AsNoTracking().FirstOrDefaultAsync(x => x.Id == 2);
+    stramer2!.Name = "Amazon Plus";
+
+    await dbContext.SaveChangesAsync();
+
+}
 
 async Task QueryLinq()
 {
