@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
-await AddNewDirectorWIthVideo();
+await MultipleEntitiesQuery();
+//await AddNewDirectorWIthVideo();
 //await AddNewActorWithVideo();
 //await AddNewStreamerWithVideoId();
 //await AddNewStreamerWithVideo();
@@ -15,6 +16,29 @@ await AddNewDirectorWIthVideo();
 //QueryStreaming();
 //await AddNewRecords();
 
+async Task MultipleEntitiesQuery()
+{
+    var videoWithActor = await dbContext!.Videos!.Include(a => a.Actors).FirstOrDefaultAsync(q => q.Id == 1);
+
+    var actor = await dbContext!.Actors!.Select(q => q.Name).ToListAsync();
+
+    var videoWithDirector = await dbContext!.Videos!
+                                    .Where(q => q.Director != null)
+                                    .Include(d => d.Director)
+                                    .Select(q =>
+                                    new
+                                    {
+                                        DirectorName = $"{q.Director!.Name} {q.Director.SurName}",
+                                        Movie = q.Name
+                                    }
+                                    ).ToListAsync();
+
+    foreach (var movie in videoWithDirector)
+    {
+        Console.WriteLine($"{movie.Movie} - {movie.DirectorName}");
+    }
+}
+
 async Task AddNewDirectorWIthVideo()
 {
     var director = new Director() { Name = "George", SurName = "Miller", VideoId = 1 };
@@ -22,6 +46,7 @@ async Task AddNewDirectorWIthVideo()
     dbContext.Add(director);
     await dbContext.SaveChangesAsync();
 }
+
 async Task AddNewActorWithVideo()
 {
     var actor = new Actor()
