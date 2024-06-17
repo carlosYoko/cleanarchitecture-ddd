@@ -12,6 +12,16 @@ namespace CleanArchitecture.Data
                 .EnableSensitiveDataLogging();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Streamer>()
+                .HasMany(v => v.Videos)
+                .WithOne(s => s.Streamer)
+                .HasForeignKey(k => k.StreamerId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
         public DbSet<Streamer>? Streamers { get; set; }
         public DbSet<Video>? Videos { get; set; }
     }
