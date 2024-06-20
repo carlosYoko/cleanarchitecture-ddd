@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
-await MultipleEntitiesQuery();
+//await MultipleEntitiesQuery();
 //await AddNewDirectorWIthVideo();
 //await AddNewActorWithVideo();
 //await AddNewStreamerWithVideoId();
