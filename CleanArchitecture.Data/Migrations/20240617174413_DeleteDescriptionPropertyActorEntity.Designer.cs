@@ -3,6 +3,7 @@ using CleanArchitecture.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitecture.Data.Migrations
 {
     [DbContext(typeof(StreamerDbContext))]
-    partial class StreamerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240617174413_DeleteDescriptionPropertyActorEntity")]
+    partial class DeleteDescriptionPropertyActorEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace CleanArchitecture.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actors");
+                    b.ToTable("Actor");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Domain.Director", b =>
@@ -50,11 +52,11 @@ namespace CleanArchitecture.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SurName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -66,7 +68,7 @@ namespace CleanArchitecture.Data.Migrations
                     b.HasIndex("VideoId")
                         .IsUnique();
 
-                    b.ToTable("Directores");
+                    b.ToTable("Director");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Domain.Streamer", b =>

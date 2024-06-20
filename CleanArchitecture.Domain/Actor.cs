@@ -10,7 +10,7 @@ namespace CleanArchitecture.Domain
         }
 
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string SurName { get; set; } = string.Empty;
         public virtual ICollection<Video> Videos { get; set; }
     }
 }

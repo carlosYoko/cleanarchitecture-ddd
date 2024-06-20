@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 StreamerDbContext dbContext = new();
 
+//await MultipleEntitiesQuery();
+//await AddNewDirectorWIthVideo();
+//await AddNewActorWithVideo();
+//await AddNewStreamerWithVideoId();
+//await AddNewStreamerWithVideo();
 //await TrackingAndNotTracking();
 //await QueryLinq();
 //await QueryMethods();
@@ -11,6 +16,70 @@ StreamerDbContext dbContext = new();
 //QueryStreaming();
 //await AddNewRecords();
 
+async Task MultipleEntitiesQuery()
+{
+    var videoWithActor = await dbContext!.Videos!.Include(a => a.Actors).FirstOrDefaultAsync(q => q.Id == 1);
+
+    var actor = await dbContext!.Actors!.Select(q => q.Name).ToListAsync();
+
+    var videoWithDirector = await dbContext!.Videos!
+                                    .Where(q => q.Director != null)
+                                    .Include(d => d.Director)
+                                    .Select(q =>
+                                    new
+                                    {
+                                        DirectorName = $"{q.Director!.Name} {q.Director.SurName}",
+                                        Movie = q.Name
+                                    }
+                                    ).ToListAsync();
+
+    foreach (var movie in videoWithDirector)
+    {
+        Console.WriteLine($"{movie.Movie} - {movie.DirectorName}");
+    }
+}
+
+async Task AddNewDirectorWIthVideo()
+{
+    var director = new Director() { Name = "George", SurName = "Miller", VideoId = 1 };
+
+    dbContext.Add(director);
+    await dbContext.SaveChangesAsync();
+}
+
+async Task AddNewActorWithVideo()
+{
+    var actor = new Actor()
+    {
+        Name = "Tom",
+        SurName = "Hardy"
+    };
+
+    await dbContext.AddAsync(actor);
+    await dbContext.SaveChangesAsync();
+
+    var videoActor = new VideoActor() { ActorId = actor.Id, VideoId = 1 };
+
+    await dbContext.AddAsync(videoActor);
+    await dbContext.SaveChangesAsync();
+}
+
+async Task AddNewStreamerWithVideoId()
+{
+    var movie = new Video() { Name = "Batman Forever", StreamerId = 1002 };
+
+    await dbContext.AddAsync(movie);
+    await dbContext.SaveChangesAsync();
+}
+
+async Task AddNewStreamerWithVideo()
+{
+    var movistar = new Streamer() { Name = "Movistar", Url = "https://www.movistar.com" };
+    var movie = new Video() { Name = "Juegos del hambre", Streamer = movistar };
+
+    await dbContext.AddAsync(movie);
+    await dbContext.SaveChangesAsync();
+}
 async Task TrackingAndNotTracking()
 {
     var stramer = await dbContext!.Streamers!.FirstOrDefaultAsync(x => x.Id == 1);
