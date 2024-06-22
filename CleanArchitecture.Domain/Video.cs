@@ -12,7 +12,7 @@ namespace CleanArchitecture.Domain
         public string Name { get; set; } = string.Empty;
         public int StreamerId { get; set; }
         public virtual Streamer? Streamer { get; set; }
-        public virtual ICollection<Actor> Actors { get; set; }
+        public virtual ICollection<Actor>? Actors { get; set; }
         public virtual Director? Director { get; set; }
     }
 }
