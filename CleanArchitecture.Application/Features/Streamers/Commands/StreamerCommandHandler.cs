@@ -52,7 +52,6 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands
             {
                 _logger!.LogError($"Error al enviar el email de {streamer.Id}");
             }
-
         }
     }
 }
