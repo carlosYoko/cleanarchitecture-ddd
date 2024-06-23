@@ -16,13 +16,12 @@ namespace CleanArchitecture.API.Controllers
             this._mediator = mediator;
         }
 
-        [HttpGet("{userName}", Name = "GetVideo")]
+        [HttpGet("{username}", Name = "GetVideo")]
         [ProducesResponseType(typeof(IEnumerable<VideosVM>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<VideosVM>>> GetVideosByUserName(string username)
+        public async Task<ActionResult<IEnumerable<VideosVM>>> GetVideosByUsername(string username)
         {
             var query = new GetVideosListQuery(username);
             var videos = await _mediator!.Send(query);
-
             return Ok(videos);
         }
     }
