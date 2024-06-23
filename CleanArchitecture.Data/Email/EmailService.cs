@@ -9,7 +9,7 @@ namespace CleanArchitecture.Infrastructure.Email
 {
     public class EmailService : IEmailService
     {
-        public EmailSettings? emailSettings; { get; }
+        public EmailSettings? emailSettings { get; }
         public ILogger<EmailService>? logger { get; }
 
         public EmailService(IOptions<EmailSettings?> emailSettings, ILogger<EmailService>? logger)
