@@ -3,6 +3,7 @@ using CleanArchitecture.Application.Contracts.Identity;
 using CleanArchitecture.Application.Models.Identity;
 using CleanArchitecture.Identity.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,11 +17,11 @@ namespace CleanArchitecture.Identity.Services
         private readonly SignInManager<ApplicationUser>? _signInManager;
         private readonly JwtSettings? _jwtSettings;
 
-        public AuthService(UserManager<ApplicationUser>? userManager, SignInManager<ApplicationUser>? signInManager, JwtSettings? jwtSettings)
+        public AuthService(UserManager<ApplicationUser>? userManager, SignInManager<ApplicationUser>? signInManager, IOptions<JwtSettings>? jwtSettings)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _jwtSettings = jwtSettings;
+            _jwtSettings = jwtSettings!.Value;
         }
 
         public async Task<AuthResponse> Login(AuthRequest request)
