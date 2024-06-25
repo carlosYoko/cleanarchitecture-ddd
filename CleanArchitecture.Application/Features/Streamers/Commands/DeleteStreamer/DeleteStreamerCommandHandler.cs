@@ -26,7 +26,7 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands.DeleteStream
             if (streamerToDelete == null)
             {
                 _logger!.LogError($"El streamer {request.Id} no exite");
-                throw new NotFoundExcpetion(nameof(Streamer), request.Id);
+                throw new NotFoundException(nameof(Streamer), request.Id);
             }
 
             await _streamerRepository.DeleteAsync(streamerToDelete);

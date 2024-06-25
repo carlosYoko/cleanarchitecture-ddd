@@ -1,43 +1,67 @@
 ﻿using CleanArchitecture.API.Errors;
+using CleanArchitecture.Application.Exceptions;
+using Newtonsoft.Json;
 using System.Net;
-using System.Text.Json;
 
 namespace CleanArchitecture.API.Middleware
 {
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate? _next;
-        private readonly ILogger<ExceptionMiddleware>? _logger;
-        private readonly IHostEnvironment? _environment;
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly IHostEnvironment _env;
 
-        public ExceptionMiddleware(RequestDelegate? next, ILogger<ExceptionMiddleware>? logger, IHostEnvironment? environment)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
         {
             _next = next;
             _logger = logger;
-            _environment = environment;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await _next!(context);
+                await _next(context);
             }
             catch (Exception ex)
             {
-                _logger!.LogError(ex, ex.Message);
+                _logger.LogError(ex, ex.Message);
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                var statusCode = (int)HttpStatusCode.InternalServerError;
+                var result = string.Empty;
 
-                var response = _environment.IsDevelopment()
-                    ? new CodeErrorException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace)
-                    : new CodeErrorException((int)(HttpStatusCode.InternalServerError));
+                switch (ex)
+                {
+                    case NotFoundException notFoundException:
+                        statusCode = (int)HttpStatusCode.NotFound;
+                        break;
 
-                var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                var json = JsonSerializer.Serialize(response, options);
+                    case ValidationException validationException:
+                        statusCode = (int)HttpStatusCode.BadRequest;
+                        var validationJson = JsonConvert.SerializeObject(validationException.Errors);
+                        result = JsonConvert.SerializeObject(new CodeErrorException(statusCode, ex.Message, validationJson));
+                        break;
 
-                await context.Response.WriteAsync(json);
+                    case BadRequestException badRequestException:
+                        statusCode = (int)HttpStatusCode.BadRequest;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (string.IsNullOrEmpty(result))
+                    result = JsonConvert.SerializeObject(new CodeErrorException(statusCode, ex.Message, ex.StackTrace));
+
+
+                context.Response.StatusCode = statusCode;
+
+                await context.Response.WriteAsync(result);
+
             }
+
         }
+
     }
 }

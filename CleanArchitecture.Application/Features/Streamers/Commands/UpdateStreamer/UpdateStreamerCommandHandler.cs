@@ -27,7 +27,7 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands.UpdateStream
             if (streamerToUpdate == null)
             {
                 _logger!.LogError($"No se ha encontrado el streamer con ID {request.Id}");
-                throw new NotFoundExcpetion(nameof(Streamer), request.Id);
+                throw new NotFoundException(nameof(Streamer), request.Id);
             }
 
             _mapper!.Map(request, streamerToUpdate, typeof(UpdateStreamerCommand), typeof(Streamer));
