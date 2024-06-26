@@ -86,5 +86,21 @@ namespace CleanArchitecture.Infrastructure.Repositories
             this._context!.Set<T>().Remove(entity);
             await this._context.SaveChangesAsync();
         }
+
+        public void AddEntity(T entity)
+        {
+            this._context!.Set<T>().Add(entity);
+        }
+
+        public void UpdateEntity(T entity)
+        {
+            _context!.Set<T>().Attach(entity);
+            this._context!.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void DeleteEntity(T entity)
+        {
+            this._context!.Set<T>().Remove(entity);
+        }
     }
 }
