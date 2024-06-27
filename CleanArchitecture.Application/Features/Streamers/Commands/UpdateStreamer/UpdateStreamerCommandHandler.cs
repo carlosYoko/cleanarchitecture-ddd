@@ -9,20 +9,21 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands.UpdateStream
 {
     public class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreamerCommand>
     {
-        private readonly IStreamerRepository? _streamerRepository;
+        //private readonly IStreamerRepository? _streamerRepository;
+        private readonly IUnitOfWork? _unitOfWork;
         private readonly IMapper? _mapper;
         private readonly ILogger<UpdateStreamerCommandHandler>? _logger;
 
-        public UpdateStreamerCommandHandler(IStreamerRepository? streamerRepository, IMapper? mapper, ILogger<UpdateStreamerCommandHandler>? logger)
+        public UpdateStreamerCommandHandler(IUnitOfWork? unitOfWork, IMapper? mapper, ILogger<UpdateStreamerCommandHandler>? logger)
         {
-            this._streamerRepository = streamerRepository;
+            this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._logger = logger;
         }
 
         public async Task<Unit> Handle(UpdateStreamerCommand request, CancellationToken cancellationToken)
         {
-            var streamerToUpdate = await _streamerRepository!.GetByIdAsync(request.Id);
+            var streamerToUpdate = await _unitOfWork!.StreamerRepository.GetByIdAsync(request.Id);
 
             if (streamerToUpdate == null)
             {
@@ -32,7 +33,9 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands.UpdateStream
 
             _mapper!.Map(request, streamerToUpdate, typeof(UpdateStreamerCommand), typeof(Streamer));
 
-            await _streamerRepository!.UpdateAsync(streamerToUpdate);
+
+            _unitOfWork.StreamerRepository.UpdateEntity(streamerToUpdate);
+            await _unitOfWork.Complete();
 
             _logger!.LogInformation($"El streamer {request.Id} se ha actualizado correctamente");
 
