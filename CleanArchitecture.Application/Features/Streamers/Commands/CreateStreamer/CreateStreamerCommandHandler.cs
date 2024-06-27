@@ -29,6 +29,7 @@ namespace CleanArchitecture.Application.Features.Streamers.Commands.CreateStream
             var streamerEntity = _mapper!.Map<Streamer>(request);
             _unitOfWork!.StreamerRepository.AddEntity(streamerEntity);
             var result = await _unitOfWork.Complete();
+
             if (result <= 0)
             {
                 throw new Exception("No se pudo insertar el streamer");
