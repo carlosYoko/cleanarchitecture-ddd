@@ -1,15 +1,12 @@
 ﻿using AutoFixture;
 using CleanArchitecture.Domain;
 using CleanArchitecture.Infrastructure.Persistence;
-using CleanArchitecture.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace CleanArchitecture.Application.UnitTest.Mocks
 {
     public static class MockVideoRepository
     {
-        public static Mock<VideoRepository> GetVideoRepository()
+        public static void AddDataVideoRepository(StreamerDbContext streamerDbContextFake)
         {
             var fixture = new Fixture();
             fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -21,16 +18,8 @@ namespace CleanArchitecture.Application.UnitTest.Mocks
                     .Create()
                 );
 
-            var options = new DbContextOptionsBuilder<StreamerDbContext>()
-                .UseInMemoryDatabase(databaseName: $"StreamerDbContext-{Guid.NewGuid}")
-                .Options;
-
-            var streamerDbContextFake = new StreamerDbContext(options);
             streamerDbContextFake.Videos!.AddRange(videos);
             streamerDbContextFake.SaveChanges();
-
-            var mockRepository = new Mock<VideoRepository>(streamerDbContextFake);
-            return mockRepository;
         }
     }
 }
